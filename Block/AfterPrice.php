@@ -99,4 +99,17 @@ class AfterPrice extends \Magento\Framework\View\Element\Template
     {
         return $this->_helper->getBasePriceText($this->getProduct());
     }
+<<<<<<< HEAD
 }
+=======
+
+    /**
+     * Returns the base price for tier prices
+     * @return array
+     */
+    public function getTierBasePrices(): array
+    {
+        return $this->_helper->getTierBasePricesText($this->getProduct(), true);
+    }
+}
+>>>>>>> b869307a3dff204c5644aec6d6cfb9e5456eb5b8

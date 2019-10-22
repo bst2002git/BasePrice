@@ -34,14 +34,14 @@ class AfterPrice extends \Magento\Framework\View\Element\Template
     protected $_helper;
 
     /**
-     * @var \Magento\Catalog\Model\Product
-     */
-    protected $_product;
-
-    /**
      * @var string
      */
     protected $_configurablePricesJson;
+
+    /**
+     * @var \Magento\Framework\Registry
+     */
+    protected $_registry;
 
     /**
      * Constructor
@@ -56,14 +56,37 @@ class AfterPrice extends \Magento\Framework\View\Element\Template
 	public function __construct(
 		\Magento\Backend\Block\Template\Context $context,
         \Magenerds\BasePrice\Helper\Data $helper,
-        \Magento\Catalog\Model\Product $product,
+        \Magento\Framework\Registry $registry,
 		array $data = []
 	){
         $this->_scopeConfig = $context->getScopeConfig();
         $this->_helper = $helper;
-        $this->_product = $product;
+        $this->_registry = $registry;
 		parent::__construct($context, $data);
 	}
+
+    /**
+     * Loops through all childs and returns true if at least one of the childs has a base price amount set.
+     * This extra check is needed to fix a bug where the html tag was not created if the parent product
+     * didn't have a product amount configured but one of the childs did. This resulted in the base price not
+     * showing at all because the js didn't have a container to add the base price into.
+     *
+     * @return bool
+     */
+    public function hasChildWithBasePrice(): bool {
+
+        if(!$this->isConfigurable()) {
+            return false;
+        }
+
+        foreach ($this->getProduct()->getTypeInstance()->getUsedProducts($this->getProduct()) as $child) {
+            if(!empty($child->getData('baseprice_product_amount'))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Returns the configuration if module is enabled
@@ -79,7 +102,14 @@ class AfterPrice extends \Magento\Framework\View\Element\Template
 
         $productAmount = $this->getProduct()->getData('baseprice_product_amount');
 
-        return $moduleEnabled && !empty($productAmount);
+        return $moduleEnabled && (!empty($productAmount) || $this->hasChildWithBasePrice());
+    }
+
+    /**
+     * @return bool
+     */
+    public function isConfigurable():bool {
+        return $this->getProduct()->getTypeId() == 'configurable';
     }
 
 	/**
@@ -89,7 +119,7 @@ class AfterPrice extends \Magento\Framework\View\Element\Template
 	 */
 	public function getProduct()
 	{
-        return $this->_product;
+        return $this->_registry->registry('current_product');
 	}
 
     /**
@@ -99,4 +129,17 @@ class AfterPrice extends \Magento\Framework\View\Element\Template
     {
         return $this->_helper->getBasePriceText($this->getProduct());
     }
+<<<<<<< HEAD
 }
+=======
+
+    /**
+     * Returns the base price for tier prices
+     * @return array
+     */
+    public function getTierBasePrices(): array
+    {
+        return $this->_helper->getTierBasePricesText($this->getProduct(), true);
+    }
+}
+>>>>>>> 9b88813fe8eeefb7b02c7bb083b9fbed4951edb2

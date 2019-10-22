@@ -21,7 +21,20 @@
  */
 ?>
 <?php if ($block->isEnabled()): ?>
+<<<<<<< HEAD
     <div class="baseprice">
         <?php echo $block->getBasePrice() ?>
     </div>
+=======
+    <div class="baseprice"><?php echo $block->getBasePrice() ?></div>
+    <?php if ($block->isConfigurable()): ?>
+        <script type="text/x-magento-init">
+        {
+            "*": {
+                "Magenerds_BasePrice/js/configurable-baseprice": {}
+            }
+        }
+        </script>
+    <?php endif; ?>
+>>>>>>> 9b88813fe8eeefb7b02c7bb083b9fbed4951edb2
 <?php endif; ?>

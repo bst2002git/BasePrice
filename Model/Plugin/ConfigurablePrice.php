@@ -66,11 +66,9 @@ class ConfigurablePrice
     public function afterGetJsonConfig(\Magento\ConfigurableProduct\Block\Product\View\Type\Configurable $subject, $json)
     {
         $config = $this->_jsonDecoder->decode($json);
-
-        /** @var $product \Magento\Catalog\Model\Product */
+				/** @var $product \Magento\Catalog\Model\Product */
         foreach ($subject->getAllowProducts() as $product) {
             $basePriceText = $this->_helper->getBasePriceText($product);
-
             if (empty($basePriceText)) {
                 // if simple has no configured base price, us at least the base price of configurable
                 $basePriceText = $this->_helper->getBasePriceText($subject->getProduct());
@@ -78,7 +76,6 @@ class ConfigurablePrice
 
             $config['optionPrices'][$product->getId()]['magenerds_baseprice_text'] = $basePriceText;
         }
-
         return $this->_jsonEncoder->encode($config);
     }
 }

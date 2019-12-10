@@ -6,6 +6,7 @@
     "magenerds/dashboard": "^1.0"
   },
   "type": "magento2-module",
+	"version": "2.0.2",
   "license": "OSL-3.0",
   "autoload": {
     "files": [

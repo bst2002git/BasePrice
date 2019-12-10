@@ -21,7 +21,7 @@
     <body>
         <referenceContainer name="product.info.main">
             <block after="product.info.price" class="Magenerds\BasePrice\Block\AfterPrice" name="price.final.base" as="price.final.base"
-                   template="Magenerds_BasePrice::configurable/afterprice.phtml"/>
+                   template="Magenerds_BasePrice::afterprice.phtml"/>
         </referenceContainer>
     </body>
 </page>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+				<referenceContainer name="content">
+            <block after="category.product.addto" as="product_list_price.final.base"
+                            class="Magenerds\BasePrice\Block\Product\AfterPrice"
+                            name="product.list.price.final.base"
+                            template="Magenerds_BasePrice::category/afterprice.phtml"/>
+        </referenceContainer>
+
+		</body>
+</page>
+

@@ -31,7 +31,7 @@ require([
             result = config.optionPrices[_.findKey(config.index, options)];
         }
 
-        var basePriceField = $('.product-info-price .baseprice');
+        var basePriceField = $('.product-info-main .baseprice');
         if (typeof result != 'undefined' && basePriceField.length) {
             basePriceField.html(result.magenerds_baseprice_text);
         }

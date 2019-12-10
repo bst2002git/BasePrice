@@ -15,12 +15,13 @@
  * @link       https://www.techdivision.com/
  * @author     Florian Sydekum <f.sydekum@techdivision.com>
  */
-namespace Magenerds\BasePrice\Block;
+namespace Magenerds\BasePrice\Block\Product;
 
 /**
  * Class AfterPrice
- * @package Magenerds\BasePrice\Block
+ * @package Magenerds\BasePrice\Block\Product
  */
+
 class AfterPrice extends \Magento\Framework\View\Element\Template
 {
     /**
@@ -101,8 +102,10 @@ class AfterPrice extends \Magento\Framework\View\Element\Template
         );
 
         $productAmount = $this->getProduct()->getData('baseprice_product_amount');
+				$p=$this->getProduct();
 
-        return $moduleEnabled && (!empty($productAmount) || $this->hasChildWithBasePrice());
+       return $moduleEnabled && (!empty($productAmount) || $this->hasChildWithBasePrice());
+       //return $moduleEnabled;
     }
 
     /**
@@ -119,7 +122,8 @@ class AfterPrice extends \Magento\Framework\View\Element\Template
 	 */
 	public function getProduct()
 	{
-        return $this->_registry->registry('current_product');
+ 				$product=$this->getParentBlock()->getProduct();
+        return $product;
 	}
 
     /**
@@ -137,6 +141,16 @@ class AfterPrice extends \Magento\Framework\View\Element\Template
     public function getTierBasePrices(): array
     {
         return $this->_helper->getTierBasePricesText($this->getProduct(), true);
+    }
+
+		/**
+     * Return identifiers for produced content
+     *
+     * @return array
+     */
+    public function getIdentities()
+    {
+        return $this->getProduct()->getIdentities();
     }
 
 }

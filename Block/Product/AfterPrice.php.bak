@@ -15,13 +15,13 @@
  * @link       https://www.techdivision.com/
  * @author     Florian Sydekum <f.sydekum@techdivision.com>
  */
-namespace Magenerds\BasePrice\Block;
+namespace Magenerds\BasePrice\Block\Product;
 
 /**
  * Class AfterPrice
- * @package Magenerds\BasePrice\Block
+ * @package Magenerds\BasePrice\Block\Product
  */
-class AfterPrice extends \Magento\Framework\View\Element\Template
+class AfterPrice extends \Magento\Framework\View\Element\Template implements \Magento\Framework\DataObject\IdentityInterface
 {
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
@@ -43,10 +43,18 @@ class AfterPrice extends \Magento\Framework\View\Element\Template
      */
     protected $_registry;
 
+		/**
+     * Catalog data
+     *
+     * @var \Magento\Catalog\Helper\Data
+     */
+    protected $_catalogData = null;
+
     /**
      * Constructor
      *
      * @param \Magento\Backend\Block\Template\Context $context
+		 * @param \Magento\Catalog\Helper\Data $catalogData
      * @param \Magenerds\BasePrice\Helper\Data $helper
      * @param \Magento\Catalog\Model\Product $product
      * @param \Magento\Catalog\Helper\Product $catalogProduct
@@ -55,11 +63,13 @@ class AfterPrice extends \Magento\Framework\View\Element\Template
      */
 	public function __construct(
 		\Magento\Backend\Block\Template\Context $context,
+		\Magento\Catalog\Helper\Data $catalogData,
         \Magenerds\BasePrice\Helper\Data $helper,
         \Magento\Framework\Registry $registry,
 		array $data = []
 	){
         $this->_scopeConfig = $context->getScopeConfig();
+				$this->_catalogData = $catalogData;
         $this->_helper = $helper;
         $this->_registry = $registry;
 		parent::__construct($context, $data);
@@ -100,9 +110,10 @@ class AfterPrice extends \Magento\Framework\View\Element\Template
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
 
-        $productAmount = $this->getProduct()->getData('baseprice_product_amount');
+        //$productAmount = $this->getProduct()->getData('baseprice_product_amount');
 
-        return $moduleEnabled && (!empty($productAmount) || $this->hasChildWithBasePrice());
+       // return $moduleEnabled && (!empty($productAmount) || $this->hasChildWithBasePrice());
+        return $moduleEnabled;
     }
 
     /**
@@ -119,7 +130,11 @@ class AfterPrice extends \Magento\Framework\View\Element\Template
 	 */
 	public function getProduct()
 	{
-        return $this->_registry->registry('current_product');
+        $product = $this->_getData('product');
+        if (!$product) {
+            $product = $this->_registry->registry('product');
+        }
+        return $product;
 	}
 
     /**
@@ -139,4 +154,13 @@ class AfterPrice extends \Magento\Framework\View\Element\Template
         return $this->_helper->getTierBasePricesText($this->getProduct(), true);
     }
 
+		/**
+     * Return identifiers for produced content
+     *
+     * @return array
+     */
+    public function getIdentities()
+    {
+        return $this->getProduct()->getIdentities();
+    }
 }

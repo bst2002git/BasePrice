@@ -1,0 +1,96 @@
+<?php
+namespace Magenerds\BasePrice\Model\Plugin\Render;
+
+use Magento\Catalog\Pricing\Price;
+use Magento\Framework\Pricing\Render\PriceBox as BasePriceBox;
+use Magento\Msrp\Pricing\Price\MsrpPrice;
+use Magento\Catalog\Model\Product\Pricing\Renderer\SalableResolverInterface;
+use Magento\Framework\View\Element\Template\Context;
+use Magento\Framework\Pricing\SaleableInterface;
+use Magento\Framework\Pricing\Price\PriceInterface;
+use Magento\Framework\Pricing\Render\RendererPool;
+use Magento\Framework\App\ObjectManager;
+use Magento\Catalog\Pricing\Price\MinimalPriceCalculatorInterface;
+
+class FinalPriceBox extends \Magento\Catalog\Pricing\Render\FinalPriceBox
+{
+		/**
+     * @var SalableResolverInterface
+     */
+    private $salableResolver;
+
+		/**
+     * @var MinimalPriceCalculatorInterface
+     */
+    private $minimalPriceCalculator;
+
+		/**
+     * @var \Magenerds\BasePrice\Helper\Data
+     */
+    protected $_helper;
+
+		/**
+     * @param Context $context
+     * @param SaleableInterface $saleableItem
+     * @param PriceInterface $price
+     * @param RendererPool $rendererPool
+     * @param array $data
+     * @param SalableResolverInterface $salableResolver
+     * @param MinimalPriceCalculatorInterface $minimalPriceCalculator
+     */
+    public function __construct(
+        Context $context,
+        SaleableInterface $saleableItem,
+        PriceInterface $price,
+        RendererPool $rendererPool,
+				\Magenerds\BasePrice\Helper\Data $helper,
+        array $data = [],
+        SalableResolverInterface $salableResolver = null,
+        MinimalPriceCalculatorInterface $minimalPriceCalculator = null
+    ) {
+        parent::__construct($context, $saleableItem, $price, $rendererPool, $data);
+        $this->salableResolver = $salableResolver ?: ObjectManager::getInstance()->get(SalableResolverInterface::class);
+        $this->minimalPriceCalculator = $minimalPriceCalculator
+            ?: ObjectManager::getInstance()->get(MinimalPriceCalculatorInterface::class);
+				 $this->_helper = $helper;
+    }
+
+
+		/**
+     * Returns the base price information
+     */
+    public function getBasePrice()
+    {
+				return $this->_helper->getBasePriceText($this->getProduct());
+    }
+
+		/**
+     * @inheritdoc
+     */
+    protected function _toHtml()
+    {
+        if (!$this->salableResolver->isSalable($this->getSaleableItem())) {
+            return '';
+        }
+
+        $result = parent::_toHtml();
+        //Renders MSRP in case it is enabled
+        if ($this->isMsrpPriceApplicable()) {
+            /** @var BasePriceBox $msrpBlock */
+            $msrpBlock = $this->rendererPool->createPriceRender(
+                MsrpPrice::PRICE_CODE,
+                $this->getSaleableItem(),
+                [
+                    'real_price_html' => $result,
+                    'zone' => $this->getZone(),
+                ]
+            );
+            $result = $msrpBlock->toHtml();
+        }
+
+				$product = $this->getSaleableItem();
+				$result.='<div class="baseprice">PriceBox</div>';
+        return $this->wrapResult($result);
+    }
+
+}

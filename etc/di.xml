@@ -22,10 +22,5 @@
         <plugin name="magenerds_baseprice_configurablePriceRender" type="Magenerds\BasePrice\Model\Plugin\ConfigurablePrice" />
     </type>
     <preference for="Magento\GroupedProduct\Model\Product\Type\Grouped" type="Magenerds\BasePrice\Model\Plugin\Grouped"/>
-		<!--
-		<type name="Magento\Catalog\Block\Product\AbstractProduct">
-      <plugin name="magenerds_baseprice_priceRender" type="Magenerds\BasePrice\Model\Plugin\AfterPricePlugin" sortOrder="1" disabled="false" />
-    </type>
-		-->
 		<preference for="Magento\Catalog\Pricing\Render\FinalPriceBox" type="Magenerds\BasePrice\Model\Plugin\Render\FinalPriceBox" />
 </config>
